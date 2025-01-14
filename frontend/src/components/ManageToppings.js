@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import DataApi from "../services/toppingService";
+import DataApi from "../services/Data";
 
 const ManageToppings = () => {
     const [toppings, setToppings] = useState([]);
@@ -72,7 +72,6 @@ const ManageToppings = () => {
             <h2>Manage Toppings</h2>
             <input
                 type="text"
-                value={toppingName}
                 onChange={handleInputChange}
                 placeholder="Enter topping name"
             />

@@ -2,7 +2,7 @@ import { Entity, PrimaryGeneratedColumn, Column, ManyToMany, JoinTable } from "t
 import Topping from "./Topping";
 
 @Entity()
-export class Pizza {
+export default class Pizza {
     @PrimaryGeneratedColumn()
     id!: number;
 
