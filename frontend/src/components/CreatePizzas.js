@@ -60,7 +60,7 @@ const ManagePizzas = ({ onPizzaCreated }) => {
             setError("");
         } catch (error) {
             console.error("Error creating pizza:", error);
-            setError("Failed to create pizza. Please try again.")
+            setError(error.response.data.message)
         }
     };
 

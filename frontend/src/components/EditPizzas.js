@@ -4,13 +4,22 @@ import DataApi from "../services/Data";
 const EditPizza = ({pizza, onPizzaUpdated}) => {
     const [pizzaName, setPizzaName] = useState(pizza.name);
     const [selectedToppings, setSelectedToppings] = useState(pizza.toppings.map((t) => t.id));
-    const [availableToppings, setAvailableToppings] = useState([]);
+    const [toppings, setToppings] = useState([]);
 
     useEffect(() => {
-      
+      const fetchToppings = async () => {
+        try {
+          const toppings = await DataApi.getToppings();
+          setToppings(toppings);
+        } catch (error) {
+          console.error("Error fetching toppings:", error);
+        }
+      };
+
+      fetchToppings();
     }, []);
 
-    handleToggleTopping = (toppingId) => {
+    const handleToggleTopping = (toppingId) => {
       setSelectedToppings((prev) =>
         prev.includes(toppingId) ? prev.filter((id) => id !== toppingId) : [...prev, toppingId]
       );
@@ -40,11 +49,22 @@ const EditPizza = ({pizza, onPizzaUpdated}) => {
             />
             <div>
               <h3>Select Toppings</h3>
-              {}
+              {toppings.map((topping) => (
+                <div key={topping.id}>
+                  <label>
+                    <input
+                      type="checkbox"
+                      checked={selectedToppings.includes(topping.id)}
+                      onChange={() => handleToggleTopping(topping.id)}
+                    />
+                    {topping.name}
+                  </label>
+                </div>
+              ))}
 
             </div>
 
-            <button>Update Pizza</button>
+            <button onClick={handleUpdatePizza}>Update Pizza</button>
         </div>
     )
 };

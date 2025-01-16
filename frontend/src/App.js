@@ -77,7 +77,10 @@ function App() {
         >
           {selectedPizza && (<EditPizzaModal
             pizza={selectedPizza}
-            onPizzaUpdated={handlePizzaUpdated}
+            onPizzaUpdated={(updatedPizza) => {
+              handlePizzaUpdated(updatedPizza);
+              handleCloseEditModal();
+            }}
           />
         )}
           

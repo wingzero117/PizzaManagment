@@ -68,10 +68,11 @@ pizzaRouter.put("/:id", async (req, res) => {
 });
 
 pizzaRouter.delete("/:id", async (req, res) => {
-    const  { id } = req.params;
+    const { id } = req.params;
 
     try {
         const pizza = await pizzaRepository.findOneBy({ id: parseInt(id) });
+        
         if(!pizza) {
             res.status(404).json({ message: "Pizza not found" });
             return;
@@ -81,7 +82,7 @@ pizzaRouter.delete("/:id", async (req, res) => {
         res.status(200).json({ message: "Pizza deleted successfully" });
     } catch (error) {
         console.error("Error deleting pizza:", error);
-        res.status(500).json({ message: "Error deleing pizza" });
+        res.status(500).json({ message: "Error deleting pizza" });
     }
 });
 
