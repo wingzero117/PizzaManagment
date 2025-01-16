@@ -5,6 +5,7 @@ const EditPizza = ({pizza, onPizzaUpdated}) => {
     const [pizzaName, setPizzaName] = useState(pizza.name);
     const [selectedToppings, setSelectedToppings] = useState(pizza.toppings.map((t) => t.id));
     const [toppings, setToppings] = useState([]);
+    const [error, setError] = useState("");
 
     useEffect(() => {
       const fetchToppings = async () => {
@@ -31,6 +32,7 @@ const EditPizza = ({pizza, onPizzaUpdated}) => {
         onPizzaUpdated(updatedPizza);
       } catch (error) {
         console.error("Error updating pizza", error);
+        setError(error.response.data.message);
       }
     };
 
@@ -47,6 +49,7 @@ const EditPizza = ({pizza, onPizzaUpdated}) => {
                 onChange={handleInputChange}
                 placeholder="Pizza name"
             />
+            {error && <p style={{ color: "red" }}>{error}</p>}
             <div>
               <h3>Select Toppings</h3>
               {toppings.map((topping) => (

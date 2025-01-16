@@ -28,6 +28,14 @@ pizzaRouter.post("/", async (req, res) => {
             return;
         }
 
+        const existingPizzas = await pizzaRepository.find({ relations: ["toppings"] });
+        const duplicatePizza = existingPizzas.find((pizza) => pizza.toppings.every((topping) => toppingIds.includes(topping.id)));
+
+        if(duplicatePizza) {
+            res.status(400).json({ message: "A pizza like this already exists" });
+            return;
+        }
+
         const toppings = await toppingRepository.findByIds(toppingIds);
         const newPizza = pizzaRepository.create({ name, toppings });
         await pizzaRepository.save(newPizza);
@@ -51,10 +59,23 @@ pizzaRouter.put("/:id", async (req, res) => {
         }
 
         if(name) {
+            const existingPizza = await pizzaRepository.findOne({ where: { name } });
+            if(existingPizza && existingPizza.id !== pizza.id) {
+                res.status(400).json({ message: "Pizza with this name already exists" });
+                return;
+            }
             pizza.name = name;
         }
 
         if(toppingIds) {
+            const existingPizzas = await pizzaRepository.find({ relations: ["toppings"] });
+            const duplicatePizza = existingPizzas.find((pizza) => pizza.toppings.every((topping) => toppingIds.includes(topping.id)));
+
+            if(duplicatePizza) {
+                res.status(400).json({ message: "A pizza like this already exists" });
+                return;
+            }
+
             const toppings = await toppingRepository.findByIds(toppingIds);
             pizza.toppings = toppings;
         }
