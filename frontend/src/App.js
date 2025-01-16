@@ -1,37 +1,94 @@
-import React, { useState } from 'react';
-import logo from './logo.svg';
+import { useState, useEffect } from 'react';
 import './App.css';
 import Modal from "./components/Modal";
 import ToppingsModal from "./components/ManageToppings";
-import PizzasModal from "./components/ManagePizzas"
+import PizzasModal from "./components/CreatePizzas";
+import EditPizzaModal from "./components/EditPizzas";
+import DataApi from "./services/Data";
 
 function App() {
+
+  const [pizzas, setPizzas] = useState([]);
+  const [selectedPizza, setSelectedPizza] = useState(null);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+
+  useEffect(() => {
+    const fetchPizzas = async () => {
+      try {
+        const pizzaData = await DataApi.getPizzas();
+        setPizzas(pizzaData);
+      } catch (error) {
+        console.error("Error fetching pizzas", error);
+      }
+    }
+
+    fetchPizzas();
+  }, [])
+
+  const handleEditPizza = (pizza) => {
+    setSelectedPizza(pizza);
+    setIsEditModalOpen(true);
+  };
+
+  const handleCloseEditModal = () => {
+    setSelectedPizza(null);
+    setIsEditModalOpen(false);
+  };
+
+  const handlePizzaCreated = (newPizza) => {
+    setPizzas((prev) => [...prev, newPizza]);
+  };
+
+  const handlePizzaUpdated = (updatedPizza) => {
+    setPizzas((prev) => 
+      prev.map((pizza) => (pizza.id === updatedPizza.id ? updatedPizza : pizza))
+    );
+  };
+
+  const handlePizzaDelete = async (id) => {
+    try {
+      await DataApi.deletePizza(id);
+      setPizzas((prev) => prev.filter((pizza) => pizza.id !== id));
+    } catch (error) {
+      console.error("Error deleting pizza", error);
+    }
+  };
 
   return (
     <div className="App">
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
+        <p>PIZZA MANAGER</p>
+
+        <ul>
+          {pizzas.map((pizza) => (
+            <li key={pizza.id}>
+              {pizza.name} - Toppings: {pizza.toppings.map((t) => t.name).join(", ")}
+              <button onClick={() => handleEditPizza(pizza)}>Edit</button>
+              <button onClick={() => handlePizzaDelete(pizza.id)}>Delete</button>
+            </li>
+          ))}
+        </ul>
+
+        <ButtonGroup onPizzaCreated={handlePizzaCreated}/>
+        <Modal
+          isOpen={isEditModalOpen}
+          onClose={handleCloseEditModal}
+          title="Edit Pizza"
         >
-          Learn React
-        </a>
+          {selectedPizza && (<EditPizzaModal
+            pizza={selectedPizza}
+            onPizzaUpdated={handlePizzaUpdated}
+          />
+        )}
+          
+        </Modal>
+
       </header>
-      <p>
-        hello
-      </p>
-      <ButtonGroup/>
     </div>
   );
 }
 
-function ButtonGroup() {
+function ButtonGroup({ onPizzaCreated }) {
 
   const [isToppingsModalOpen, setIsToppingsModalOpen] = useState(false);
   const [isPizzasModalOpen, setIsPizzasModalOpen] = useState(false);
@@ -54,7 +111,7 @@ function ButtonGroup() {
 
   return (
     <div className="a">
-      <button onClick={handleOpenToppingsModal}>Button 1</button>
+      <button onClick={handleOpenToppingsModal}>Toppings</button>
       <Modal
         isOpen={isToppingsModalOpen}
         onClose={handleCloseToppingsModal}
@@ -62,13 +119,13 @@ function ButtonGroup() {
       >
         <ToppingsModal/>
       </Modal>
-      <button onClick={handleOpenPizzasModal}>Button 2</button>
+      <button onClick={handleOpenPizzasModal}>Create Pizza</button>
       <Modal
         isOpen={isPizzasModalOpen}
         onClose={handleClosePizzasModal}
         title="Manage Pizzas"
       >
-        <PizzasModal/>
+        <PizzasModal onPizzaCreated={onPizzaCreated}/>
       </Modal>
     </div>
   );

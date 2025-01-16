@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import DataApi from "../services/Data";
 
-const ManagePizzas = () => {
+const ManagePizzas = ({ onPizzaCreated }) => {
     const [pizzaName, setPizzaName] = useState("");
     const [toppings, setToppings] = useState([]);
     const [selectedToppings, setSelectedToppings] = useState([]);
@@ -22,7 +22,6 @@ const ManagePizzas = () => {
             try {
                 const pizzasData = await DataApi.getPizzas();
                 setPizzas(pizzasData);
-                console.log(pizzasData);
             } catch (error) {
                 console.error("Error fetching pizzas:", error);
             }
@@ -53,8 +52,9 @@ const ManagePizzas = () => {
         }
 
         try {
-            await DataApi.createPizza(pizzaName, selectedToppings);
-            console.log(selectedToppings);
+            const newPizza = await DataApi.createPizza(pizzaName, selectedToppings);
+            onPizzaCreated(newPizza);
+            setPizzas((prev) => [...prev, newPizza]);
             setPizzaName("");
             setSelectedToppings([]);
             setError("");
@@ -62,7 +62,7 @@ const ManagePizzas = () => {
             console.error("Error creating pizza:", error);
             setError("Failed to create pizza. Please try again.")
         }
-    }
+    };
 
     return (
         <div>
@@ -74,9 +74,9 @@ const ManagePizzas = () => {
             />
             <h3>Pizzas</h3>
             <ul>
-                {pizzas.map((pizzas) => (
-                    <li key={pizzas.id}>
-                        {pizzas.name} - Toppings: {pizzas.toppings.map((t) => t.name).join(", ")}
+                {pizzas.map((pizza) => (
+                    <li key={pizza.id}>
+                        {pizza.name} - Toppings: {pizza.toppings.map((t) => t.name).join(", ")}
                     </li>
                 ))}
             </ul>

@@ -37,5 +37,9 @@ export default class {
         const response = await axios.put(`${API_URL}/pizzas/${id}`, { name, toppingIds });
         return response.data;
     };
+
+    static deletePizza = async (id) => {
+        await axios.delete(`${API_URL}/pizzas/${id}`);
+    };
 }
 

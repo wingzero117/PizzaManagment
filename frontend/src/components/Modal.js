@@ -1,4 +1,3 @@
-import react from "react";
 import ReactModal from "react-modal";
 
 const Modal = ({ isOpen, onClose, children }) => {
