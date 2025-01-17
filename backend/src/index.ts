@@ -4,11 +4,14 @@ import { pizzaRouter } from "./routes/pizza";
 import "reflect-metadata";
 import AppDataSource from "./data-source";
 import cors from "cors";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const app = express();
-const PORT = 5000
+const PORT = process.env.PORT || 5000;
 
-app.use(cors());
+app.use(cors({ origin: process.env.CORS_ORIGIN || "*" }));
 app.use(express.json());
 
 AppDataSource.initialize().then(()=> {
