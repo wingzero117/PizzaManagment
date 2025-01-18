@@ -29,7 +29,13 @@ pizzaRouter.post("/", async (req, res) => {
         }
 
         const existingPizzas = await pizzaRepository.find({ relations: ["toppings"] });
-        const duplicatePizza = existingPizzas.find((pizza) => pizza.toppings.every((topping) => toppingIds.includes(topping.id)));
+        const duplicatePizza = existingPizzas.find((pizza) => {
+            const existingToppingIds = pizza.toppings.map((topping) => topping.id).sort();
+            const newToppingIds = [...toppingIds].sort();
+            return (
+                existingToppingIds.length === newToppingIds.length && existingToppingIds.every((id, index) => id === newToppingIds[index])
+            );
+        });
 
         if(duplicatePizza) {
             res.status(400).json({ message: "A pizza like this already exists" });
@@ -69,7 +75,13 @@ pizzaRouter.put("/:id", async (req, res) => {
 
         if(toppingIds) {
             const existingPizzas = await pizzaRepository.find({ relations: ["toppings"] });
-            const duplicatePizza = existingPizzas.find((pizza) => pizza.toppings.every((topping) => toppingIds.includes(topping.id)));
+            const duplicatePizza = existingPizzas.find((pizza) => {
+                const existingToppingIds = pizza.toppings.map((topping) => topping.id).sort();
+                const newToppingIds = [...toppingIds].sort();
+                return (
+                    existingToppingIds.length === newToppingIds.length && existingToppingIds.every((id, index) => id === newToppingIds[index])
+                );
+            });
 
             if(duplicatePizza) {
                 res.status(400).json({ message: "A pizza like this already exists" });
