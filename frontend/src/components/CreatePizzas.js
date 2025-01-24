@@ -66,7 +66,7 @@ const ManagePizzas = ({ onPizzaCreated }) => {
 
     return (
         <div>
-            <h2>Manage Pizzas</h2>
+            <h2>Create Pizzas</h2>
             <input
                 type="text"
                 onChange={handleInputChange}
