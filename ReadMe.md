@@ -75,3 +75,6 @@ cd e2e
 npx playwright test
 ```
 
+## **Contributer**
+
+Cecil Osif
