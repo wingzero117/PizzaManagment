@@ -95,7 +95,31 @@ test.describe('Pizza Management', () => {
 
     await page.fill('input[placeholder="Pizza name"]', 'New Test Pizza');
 
+    await page.click('div[role="dialog"] button:has-text("Update Pizza")');
+
     await expect(page.locator('text=New Test Pizza')).toBeVisible();
+  });
+
+  test('Should change a pizza toppings', async ({ page }) => {
+    await page.goto('/');
+
+    await page.click('text=Toppings');
+
+    await page.fill('input[placeholder="Enter topping name"]', 'Test Topping 2');
+    await page.click('div[role="dialog"] button:has-text("Add Topping")');
+
+    await page.click('text=Close');
+
+    const pizzaItem = page.locator('li', { hasText: 'New Test Pizza' });
+    await pizzaItem.locator('button:has-text("Edit")').click();
+
+    await expect(page.locator('h2')).toHaveText('Edit Pizza');
+
+    await page.click('label:text("Test Topping 2")'); 
+
+    await page.click('div[role="dialog"] button:has-text("Update Pizza")');
+
+    await expect(page.locator('text=New Test Pizza - Toppings: New Test Topping, Test Topping 2')).toBeVisible();
   });
 
   test('Should delete a pizza and have it removed', async ({ page }) => {
@@ -113,8 +137,11 @@ test.describe('Pizza Management', () => {
     await page.click('text=Toppings');
     await expect(page.locator('h2')).toHaveText('Manage Toppings');
   
-    const toppingItem = page.locator('li', { hasText: 'New Test Topping' });
-    await toppingItem.locator('button:has-text("Delete")').click();
+    const toppingItem1 = page.locator('li', { hasText: 'New Test Topping' });
+    await toppingItem1.locator('button:has-text("Delete")').click();
+
+    const toppingItem2 = page.locator('li', { hasText: 'Test Topping 2' });
+    await toppingItem2.locator('button:has-text("Delete")').click();
   
     await expect(page.locator('li', { hasText: 'New Test Topping' })).not.toBeVisible();
   });
