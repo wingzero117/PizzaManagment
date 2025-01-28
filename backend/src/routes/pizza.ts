@@ -75,8 +75,11 @@ pizzaRouter.put("/:id", async (req, res) => {
 
         if(toppingIds) {
             const existingPizzas = await pizzaRepository.find({ relations: ["toppings"] });
-            const duplicatePizza = existingPizzas.find((pizza) => {
-                const existingToppingIds = pizza.toppings.map((topping) => topping.id).sort();
+            const duplicatePizza = existingPizzas.find((existingPizza) => {
+                if (existingPizza.id === pizza.id) {
+                    return false;
+                }
+                const existingToppingIds = existingPizza.toppings.map((topping) => topping.id).sort();
                 const newToppingIds = [...toppingIds].sort();
                 return (
                     existingToppingIds.length === newToppingIds.length && existingToppingIds.every((id, index) => id === newToppingIds[index])

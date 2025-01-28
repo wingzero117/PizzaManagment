@@ -5,7 +5,8 @@ module.exports = defineConfig({
   timeout: 30000,
   retries: 1,
   use: {
-    baseURL: 'http://localhost:3000', // Your app's URL
+    baseURL: 'http://localhost:3000',
     headless: true,
+    trace: 'on-first-retry',
   },
 });
