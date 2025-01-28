@@ -108,6 +108,8 @@ test.describe('Pizza Management', () => {
     await page.fill('input[placeholder="Enter topping name"]', 'Test Topping 2');
     await page.click('div[role="dialog"] button:has-text("Add Topping")');
 
+    await expect(page.locator('text=Test Topping 2')).toBeVisible(); 
+
     await page.click('text=Close');
 
     const pizzaItem = page.locator('li', { hasText: 'New Test Pizza' });

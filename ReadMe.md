@@ -29,6 +29,11 @@ cd ../backend
 npm install # or yarn install
 ```
 
+```bash
+cd ../e2e
+npm install # or yarn install
+```
+
 ### **3. Running the App**
 
 **Currently the backend backend is deployed on the EC2 instance so the frontend will prioritize the EC2 connection and not connect to the backend locally, but below is how you can start the backend**
