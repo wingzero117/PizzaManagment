@@ -1,17 +1,31 @@
 import "reflect-metadata";
-import { DataSource } from "typeorm";
-import dotenv from "dotenv"
+import { DataSource, DataSourceOptions } from "typeorm";
+import dotenv from "dotenv";
 
 dotenv.config();
 
-const AppDataSource = new DataSource({
-    type: "mysql",
-    synchronize: true, // Set to false in production
-    logging: false,
-    entities: ["src/entities/*.ts"],
-    migrations: ["src/migrations/*.ts"],
-    subscribers: ["src/subscribers/*.ts"],
-    url: process.env.DATABASE_URL
-});
+const isTestEnv = process.env.NODE_ENV === "test";
+
+const dataSourceOptions: DataSourceOptions = isTestEnv
+  ? {
+      type: "sqlite",
+      database: ":memory:",
+      synchronize: true,
+      logging: false,
+      entities: ["src/entities/*.ts"],
+      migrations: ["src/migrations/*.ts"],
+      subscribers: ["src/subscribers/*.ts"],
+    }
+  : {
+      type: "mysql",
+      url: process.env.DATABASE_URL,
+      synchronize: false,
+      logging: true,
+      entities: ["src/entities/*.ts"],
+      migrations: ["src/migrations/*.ts"],
+      subscribers: ["src/subscribers/*.ts"],
+    };
+
+const AppDataSource = new DataSource(dataSourceOptions);
 
 export default AppDataSource;

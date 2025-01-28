@@ -46,6 +46,12 @@ toppingRouter.put("/:id", async (req, res) => {
             return;
         }
 
+        const existingTopping = await toppingRepository.findOneBy({ name });
+        if (existingTopping) {
+            res.status(400).json({ message: "Topping already exists" });
+            return;
+        }
+
         topping.name = name;
         await toppingRepository.save(topping);
 
